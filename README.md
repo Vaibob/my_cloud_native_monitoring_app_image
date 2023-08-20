@@ -40,6 +40,8 @@ python3 app.py
 
 This will start the Flask server on **`localhost:5000`**. Navigate to [http://localhost:5000/](http://localhost:5000/) on your browser to access the application.
 
+![](/templates/image-1.png)
+
 ## **Part 2: Dockerizing the Flask application**
 
 ### **Step 1: Create a Dockerfile**
@@ -98,17 +100,21 @@ Create an ECR repository using Python:
 ```
 import boto3
 
-# Create an ECR client
 ecr_client = boto3.client('ecr')
+repository_name = "my_cloud_native_monitoring_app_image"
 
-# Create a new ECR repository
-repository_name = 'my_cloud_native_monitoring_app_image'
-response = ecr_client.create_repository(repositoryName=repository_name)
+try:
+    response = ecr_client.create_repository(repositoryName=repository_name)
+    print(f"Repository '{repository_name}' created successfully.")
+except ecr_client.exceptions.RepositoryAlreadyExistsException:
+    print(f"Repository '{repository_name}' already exists.")
 
-# Print the repository URI
 repository_uri = response['repository']['repositoryUri']
-print(repository_uri)
+print(f"Repository URI: {repository_uri}")
 ```
+run "ecr.py" to get Repository URI
+
+![](/templates/image-2.png)
 
 ### **Step 2: Push the Docker image to ECR**
 
@@ -204,4 +210,3 @@ Once your pod is up and running, run the port-forward to expose the service
 ```bash
 kubectl port-forward service/<service_name> 5000:5000
 ```
-## Things you will Learn 
